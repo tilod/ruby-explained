@@ -7,7 +7,7 @@ class A
     'I am A'
   end
 
-  def other_methon_in_a
+  def other_method_in_a
     'other method in A'
   end
 end
@@ -45,7 +45,7 @@ class B
 
   def call_other_method_in_a
     A.new.instance_eval do
-      other_methon_in_a
+      other_method_in_a
     end
   end
 
@@ -53,6 +53,22 @@ class B
     A.new.instance_eval do
       other_method_in_b
     end
+  end
+
+  def here_be_dragons
+    first_call =
+      A.new.instance_eval do
+        other_method_in_a
+      end
+
+    other_method_in_a = 'local variable in B'
+
+    second_call =
+      A.new.instance_eval do
+        other_method_in_a
+      end
+
+    [first_call, second_call]
   end
 end
 
@@ -87,6 +103,13 @@ describe 'Flat Scope' do
   describe '#call_other_method_in_b' do
     it 'cannot call another method in B' do
       ->{ b.call_other_method_in_b }.must_raise NameError
+    end
+  end
+
+  describe '#here_be_dragons' do
+    it 'calls the method in the scope of A unless there is a local variable '\
+       'with the same name' do
+      b.here_be_dragons.must_equal ['other method in A', 'local variable in B']
     end
   end
 end
