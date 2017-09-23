@@ -108,7 +108,7 @@ describe "Flat Scope" do
 
   describe "#here_be_dragons" do
     it "calls the method in the scope of A unless there is a local variable "\
-       "with the same name" do
+       "with the same name (which shadows the method)" do
       b.here_be_dragons.must_equal ["other method in A", "local variable in B"]
     end
   end
